@@ -31,7 +31,6 @@ func (pkt *PacketListener) Listen(conf *server.Config) {
 			ResourcePacks:        conf.Resources,
 			TexturePacksRequired: conf.ResourcesRequired,
 			AcceptedProtocols:    []minecraft.Protocol{},
-			FlushRate:            -1,
 		}.Listen("raknet", ":19132")
 		if err != nil {
 			return nil, err

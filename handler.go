@@ -1,77 +1,59 @@
 package packethandler
 
 import (
-	"errors"
-	"github.com/df-mc/dragonfly/server"
-	"github.com/df-mc/dragonfly/server/session"
+	"github.com/df-mc/dragonfly/server/event"
 	"github.com/sandertv/gophertunnel/minecraft"
-	"net"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
-type PacketListener struct {
-	incoming chan *Conn
+type Handler interface {
+	HandleServerPacket(ctx *event.Context, pk packet.Packet)
+	HandleClientPacket(ctx *event.Context, pk packet.Packet)
 }
 
-func NewPacketListener() *PacketListener {
-	return &PacketListener{
-		incoming: make(chan *Conn),
+type NopHandler struct{}
+
+// Comp time check to ensure that NopHandler implements Handler.
+var _ Handler = (*NopHandler)(nil)
+
+func (h NopHandler) HandleServerPacket(*event.Context, packet.Packet) {}
+func (h NopHandler) HandleClientPacket(*event.Context, packet.Packet) {}
+
+type Conn struct {
+	*minecraft.Conn
+	h Handler
+}
+
+func NewConn(c *minecraft.Conn) *Conn {
+	cn := &Conn{Conn: c, h: NopHandler{}}
+	return cn
+}
+
+func (c *Conn) Handle(h Handler) {
+	if h == nil {
+		h = NopHandler{}
 	}
+	c.h = h
 }
 
-type Listener struct {
-	*minecraft.Listener
-	pk *PacketListener
-}
-
-func (pkt *PacketListener) Listen(conf *server.Config) {
-	conf.Listeners = nil
-	conf.Listeners = append(conf.Listeners, func(_ server.Config) (server.Listener, error) {
-		l, err := minecraft.ListenConfig{
-			StatusProvider:       minecraft.NewStatusProvider(conf.Name),
-			ResourcePacks:        conf.Resources,
-			TexturePacksRequired: conf.ResourcesRequired,
-			AcceptedProtocols:    []minecraft.Protocol{},
-			FlushRate:            -1,
-		}.Listen("raknet", ":19132")
-		if err != nil {
-			return nil, err
-		}
-
-		return &Listener{
-			Listener: l,
-			pk:       pkt,
-		}, nil
-	})
-}
-
-var errListenerClosed = errors.New("use of closed listener")
-
-func (pkt *PacketListener) Accept() (*Conn, error) {
-	c, ok := <-pkt.incoming
-	if !ok {
-		return nil, errors.New("listener closed")
+func (c *Conn) WritePacket(pk packet.Packet) error {
+	ctx := event.C()
+	c.h.HandleServerPacket(ctx, pk)
+	if ctx.Cancelled() {
+		return nil
 	}
-	return c, nil
+	return c.Conn.WritePacket(pk)
 }
 
-func (l *Listener) Accept() (session.Conn, error) {
-	c, err := l.Listener.Accept()
+func (c *Conn) ReadPacket() (packet.Packet, error) {
+	pk, err := c.Conn.ReadPacket()
 	if err != nil {
-		return nil, &net.OpError{Op: "accept", Net: "minecraft", Addr: l.Listener.Addr(), Err: errListenerClosed}
+		return nil, err
 	}
-	conn := NewConn(c.(*minecraft.Conn))
-	l.pk.incoming <- conn
-	return conn, nil
-}
-
-// Disconnect disconnects a connection from the Listener with a reason.
-func (l *Listener) Disconnect(conn session.Conn, reason string) error {
-	return l.Listener.Disconnect(conn.(*Conn).Conn, reason)
-}
-
-// Close closes the Listener.
-func (l *Listener) Close() error {
-	_ = l.Listener.Close()
-	close(l.pk.incoming)
-	return nil
+	ctx := event.C()
+	c.h.HandleClientPacket(ctx, pk)
+	if ctx.Cancelled() {
+		return nil, nil
+	}
+	return pk, nil
 }

@@ -23,15 +23,15 @@ type Listener struct {
 	pk *PacketListener
 }
 
-func (pkt *PacketListener) Listen(conf *server.Config) {
+func (pkt *PacketListener) Listen(conf *server.Config, addr string, proto []minecraft.Protocol) {
 	conf.Listeners = nil
 	conf.Listeners = append(conf.Listeners, func(_ server.Config) (server.Listener, error) {
 		l, err := minecraft.ListenConfig{
 			StatusProvider:       minecraft.NewStatusProvider(conf.Name),
 			ResourcePacks:        conf.Resources,
 			TexturePacksRequired: conf.ResourcesRequired,
-			AcceptedProtocols:    []minecraft.Protocol{},
-		}.Listen("raknet", ":19132")
+			AcceptedProtocols:    proto,
+		}.Listen("raknet", addr)
 		if err != nil {
 			return nil, err
 		}

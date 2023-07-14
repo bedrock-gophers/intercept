@@ -27,10 +27,11 @@ func (pkt *PacketListener) Listen(conf *server.Config, addr string, proto []mine
 	conf.Listeners = nil
 	conf.Listeners = append(conf.Listeners, func(_ server.Config) (server.Listener, error) {
 		l, err := minecraft.ListenConfig{
-			StatusProvider:       minecraft.NewStatusProvider(conf.Name),
-			ResourcePacks:        conf.Resources,
-			TexturePacksRequired: conf.ResourcesRequired,
-			AcceptedProtocols:    proto,
+			StatusProvider:         minecraft.NewStatusProvider(conf.Name),
+			ResourcePacks:          conf.Resources,
+			TexturePacksRequired:   conf.ResourcesRequired,
+			AcceptedProtocols:      proto,
+			AuthenticationDisabled: conf.AuthDisabled,
 		}.Listen("raknet", addr)
 		if err != nil {
 			return nil, err

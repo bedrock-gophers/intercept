@@ -3,7 +3,7 @@ module github.com/bedrock-gophers/packethandler
 go 1.20
 
 require (
-	github.com/df-mc/dragonfly v0.9.8
+	github.com/df-mc/dragonfly v0.9.9-0.20230714144543-281943e6efc4
 	github.com/sandertv/gophertunnel v1.31.0
 )
 

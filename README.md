@@ -1,4 +1,4 @@
-# PacketHandler Library
+# PacketHandler
 The PacketHandler library offers a flexible and intuitive way to handle player packets within a Minecraft server. Whether you're managing incoming players or handling events triggered by player actions, PacketHandler provides a powerful toolset for managing network communication.
 
 # Importing PacketHandler into your project:

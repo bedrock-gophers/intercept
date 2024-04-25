@@ -33,7 +33,7 @@ To handle Server and Client packets using Intercept, you can use the following e
 ```go
 // PacketHandler represents our custom packet handler.
 type PacketHandler struct {
-    c *packethandler.Conn
+    c *intercept.Conn
 }
 
 // NewPacketHandler returns a new packet handler.

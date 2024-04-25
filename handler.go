@@ -1,4 +1,4 @@
-package packethandler
+package intercept
 
 import (
 	"github.com/df-mc/dragonfly/server/event"

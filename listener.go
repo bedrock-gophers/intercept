@@ -1,4 +1,4 @@
-package packethandler
+package intercept
 
 import (
 	"errors"

@@ -1,4 +1,4 @@
-module github.com/bedrock-gophers/packethandler
+module github.com/bedrock-gophers/intercept
 
 go 1.20
 
@@ -19,7 +19,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/muhammadmuzzammil1998/jsonc v1.0.0 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sandertv/go-raknet v1.12.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect

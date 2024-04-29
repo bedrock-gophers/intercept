@@ -37,7 +37,7 @@ type PacketHandler struct {
 }
 
 // NewPacketHandler returns a new packet handler.
-func NewPacketHandler(c *packethandler.Conn) *PacketHandler {
+func NewPacketHandler(c *intercept.Conn) *PacketHandler {
     return &PacketHandler{
         c: c,
     }

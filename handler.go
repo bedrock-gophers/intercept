@@ -53,7 +53,7 @@ func (c *Conn) ReadPacket() (packet.Packet, error) {
 	ctx := event.C()
 	c.h.HandleClientPacket(ctx, pk)
 	if ctx.Cancelled() {
-		return nil, nil
+		return c.ReadPacket()
 	}
 	return pk, nil
 }

@@ -31,8 +31,3 @@ func fetchPrivateField[T any](s *session.Session, name string) T {
 //
 //go:linkname playerSession github.com/df-mc/dragonfly/server/player.(*Player).session
 func playerSession(*player.Player) *session.Session
-
-// noinspection ALL
-//
-//go:linkname sessionHandlePacket github.com/df-mc/dragonfly/server/session.(*Session).handlePacket
-func sessionHandlePacket(s *session.Session, pk packet.Packet) error

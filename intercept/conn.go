@@ -25,7 +25,7 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
     }
 
     if ctx.Cancelled() {
-        return nil, fmt.Errorf("intercept: packet %T sent to %s cancelled", pkt, c.p.Name())
+        return NopPacket{}, nil
     }
     return pkt, err
 }

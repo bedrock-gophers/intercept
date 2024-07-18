@@ -27,7 +27,7 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
     if ctx.Cancelled() {
         return NopPacket{}, nil
     }
-    return pkt, err
+    return pkt, nil
 }
 
 func (c *conn) WritePacket(pk packet.Packet) error {

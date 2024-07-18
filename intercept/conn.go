@@ -1,7 +1,6 @@
 package intercept
 
 import (
-    "fmt"
     "github.com/df-mc/dragonfly/server/event"
     "github.com/df-mc/dragonfly/server/player"
     "github.com/df-mc/dragonfly/server/session"

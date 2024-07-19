@@ -12,7 +12,14 @@ go get github.com/bedrock-gophers/intercept
 To handle incoming players using Intercept, you can utilize the following example code:
 
 ```go
-intercept.Hook(PacketHandler{})
+    intercept.Hook(PacketHandler{})
+    srv.Listen()
+
+    for srv.Accept(func(p *player.Player) {
+        intercept.Intercept(p)
+    }) {
+        // Do nothing
+    }
 
 ```
 This code sets up a new packet listener and listens for incoming connections on port 19132. When a new connection is accepted, you may give a player your packet handler and start handling their packets.

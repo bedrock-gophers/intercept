@@ -12,18 +12,8 @@ go get github.com/bedrock-gophers/intercept
 To handle incoming players using Intercept, you can utilize the following example code:
 
 ```go
-pk := intercept.NewPacketListener()
-// Replace 'c' with your Dragonfly config
-pk.Listen(&c, ":19132", []minecraft.Protocol{})
-go func() {
-    for {
-        p, err := pk.Accept()
-        if err != nil {
-            return
-        }
-        p.Handle(NewPacketHandler(p))
-    }
-}()
+intercept.Hook(PacketHandler{})
+
 ```
 This code sets up a new packet listener and listens for incoming connections on port 19132. When a new connection is accepted, you may give a player your packet handler and start handling their packets.
 
@@ -32,24 +22,15 @@ To handle Server and Client packets using Intercept, you can use the following e
 
 ```go
 // PacketHandler represents our custom packet handler.
-type PacketHandler struct {
-    c *intercept.Conn
-}
-
-// NewPacketHandler returns a new packet handler.
-func NewPacketHandler(c *intercept.Conn) *PacketHandler {
-    return &PacketHandler{
-        c: c,
-    }
-}
+type PacketHandler struct {}
 
 // HandleClientPacket...
-func (h *PacketHandler) HandleClientPacket(_ *event.Context, pk packet.Packet) {
+func (h *PacketHandler) HandleClientPacket(p *player.Player, _ *event.Context, pk packet.Packet) {
     fmt.Printf("new packet sent by client: %#v", pk)
 }
 
 // HandleServerPacket ...
-func (h *PacketHandler) HandleServerPacket(_ *event.Context, pk packet.Packet) {
+func (h *PacketHandler) HandleServerPacket(p *player.Player, _ *event.Context, pk packet.Packet) {
     fmt.Printf("new packet sent from server: %#v", pk)
 }
 ```

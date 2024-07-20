@@ -32,12 +32,12 @@ To handle Server and Client packets using Intercept, you can use the following e
 type PacketHandler struct {}
 
 // HandleClientPacket...
-func (h *PacketHandler) HandleClientPacket(p *player.Player, _ *event.Context, pk packet.Packet) {
+func (h *PacketHandler) HandleClientPacket(_ *event.Context, p *player.Player, pk packet.Packet) {
     fmt.Printf("new packet sent by client: %#v", pk)
 }
 
 // HandleServerPacket ...
-func (h *PacketHandler) HandleServerPacket(p *player.Player, _ *event.Context, pk packet.Packet) {
+func (h *PacketHandler) HandleServerPacket(_ *event.Context, p *player.Player, pk packet.Packet) {
     fmt.Printf("new packet sent from server: %#v", pk)
 }
 ```

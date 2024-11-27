@@ -15,10 +15,8 @@ To handle incoming players using Intercept, you can utilize the following exampl
     intercept.Hook(PacketHandler{})
     srv.Listen()
 
-    for srv.Accept(func(p *player.Player) {
+    for p := range srv.Accept() {
         intercept.Intercept(p)
-    }) {
-        // Do nothing
     }
 
 ```
@@ -32,12 +30,12 @@ To handle Server and Client packets using Intercept, you can use the following e
 type PacketHandler struct {}
 
 // HandleClientPacket...
-func (h *PacketHandler) HandleClientPacket(_ *event.Context, p *player.Player, pk packet.Packet) {
+func (h *PacketHandler) HandleClientPacket(ctx *event.Context[*player.Player], pk packet.Packet)) {
     fmt.Printf("new packet sent by client: %#v", pk)
 }
 
 // HandleServerPacket ...
-func (h *PacketHandler) HandleServerPacket(_ *event.Context, p *player.Player, pk packet.Packet) {
+func (h *PacketHandler) HandleServerPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
     fmt.Printf("new packet sent from server: %#v", pk)
 }
 ```

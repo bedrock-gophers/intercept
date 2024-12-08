@@ -18,7 +18,7 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
 		return pkt, err
 	}
 
-	ctx := event.C(c.p)
+	ctx := event.C(c.p.H())
 	for _, h := range handlers {
 		h.HandleClientPacket(ctx, pkt)
 	}
@@ -30,7 +30,7 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
 }
 
 func (c *conn) WritePacket(pk packet.Packet) error {
-	ctx := event.C(c.p)
+	ctx := event.C(c.p.H())
 	for _, h := range handlers {
 		h.HandleServerPacket(ctx, pk)
 	}

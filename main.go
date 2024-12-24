@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/bedrock-gophers/intercept/intercept"
 	"github.com/df-mc/dragonfly/server"
-	"github.com/df-mc/dragonfly/server/event"
-	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/chat"
 	"github.com/pelletier/go-toml"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
@@ -16,10 +14,10 @@ import (
 
 type handler struct{}
 
-func (handler) HandleClientPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
+func (handler) HandleClientPacket(ctx *intercept.Context, pk packet.Packet) {
 	fmt.Printf("client packet: %T\n", pk)
 }
-func (handler) HandleServerPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
+func (handler) HandleServerPacket(ctx *intercept.Context, pk packet.Packet) {
 	fmt.Printf("server packet: %T\n", pk)
 }
 

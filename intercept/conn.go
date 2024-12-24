@@ -19,38 +19,24 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
 		return pkt, err
 	}
 
-	var cancelled bool
-	c.h.ExecWorld(func(tx *world.Tx, e world.Entity) {
-		p := e.(*player.Player)
-		ctx := event.C(p)
-		for _, h := range handlers {
-			h.HandleClientPacket(ctx, pkt)
-		}
-		if ctx.Cancelled() {
-			cancelled = true
-		}
-	})
+	ctx := event.C(c.h)
+	for _, h := range handlers {
+		h.HandleClientPacket((*Context)(ctx), pkt)
+	}
 
-	if cancelled {
+	if ctx.Cancelled() {
 		return NopPacket{}, nil
 	}
 	return pkt, nil
 }
 
 func (c *conn) WritePacket(pk packet.Packet) error {
-	var cancelled bool
-	c.h.ExecWorld(func(tx *world.Tx, e world.Entity) {
-		p := e.(*player.Player)
-		ctx := event.C(p)
-		for _, h := range handlers {
-			h.HandleClientPacket(ctx, pk)
-		}
-		if ctx.Cancelled() {
-			cancelled = true
-		}
-	})
+	ctx := event.C(c.h)
+	for _, h := range handlers {
+		h.HandleClientPacket((*Context)(ctx), pk)
+	}
 
-	if cancelled {
+	if ctx.Cancelled() {
 		return nil
 	}
 	return c.Conn.WritePacket(pk)

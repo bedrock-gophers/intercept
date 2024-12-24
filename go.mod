@@ -5,8 +5,8 @@ go 1.23
 toolchain go1.23.2
 
 require (
-	github.com/df-mc/dragonfly v0.9.20-0.20241126231928-32b8200d7dd7
-	github.com/sandertv/gophertunnel v1.42.2
+	github.com/df-mc/dragonfly v0.9.20-0.20241224203752-918a90491313
+	github.com/sandertv/gophertunnel v1.43.0
 )
 
 require (

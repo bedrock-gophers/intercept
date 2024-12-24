@@ -6,7 +6,7 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
-type Context event.Context[*world.EntityHandle]
+type Context = event.Context[*world.EntityHandle]
 
 var (
 	handlers []Handler

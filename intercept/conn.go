@@ -4,12 +4,13 @@ import (
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/session"
+	"github.com/df-mc/dragonfly/server/world"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
 type conn struct {
 	session.Conn
-	p *player.Player
+	h *world.EntityHandle
 }
 
 func (c *conn) ReadPacket() (packet.Packet, error) {
@@ -18,24 +19,38 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
 		return pkt, err
 	}
 
-	ctx := event.C(c.p)
-	for _, h := range handlers {
-		h.HandleClientPacket(ctx, pkt)
-	}
+	var cancelled bool
+	c.h.ExecWorld(func(tx *world.Tx, e world.Entity) {
+		p := e.(*player.Player)
+		ctx := event.C(p)
+		for _, h := range handlers {
+			h.HandleClientPacket(ctx, pkt)
+		}
+		if ctx.Cancelled() {
+			cancelled = true
+		}
+	})
 
-	if ctx.Cancelled() {
+	if cancelled {
 		return NopPacket{}, nil
 	}
 	return pkt, nil
 }
 
 func (c *conn) WritePacket(pk packet.Packet) error {
-	ctx := event.C(c.p)
-	for _, h := range handlers {
-		h.HandleServerPacket(ctx, pk)
-	}
+	var cancelled bool
+	c.h.ExecWorld(func(tx *world.Tx, e world.Entity) {
+		p := e.(*player.Player)
+		ctx := event.C(p)
+		for _, h := range handlers {
+			h.HandleClientPacket(ctx, pk)
+		}
+		if ctx.Cancelled() {
+			cancelled = true
+		}
+	})
 
-	if ctx.Cancelled() {
+	if cancelled {
 		return nil
 	}
 	return c.Conn.WritePacket(pk)
@@ -45,6 +60,6 @@ func Intercept(p *player.Player) {
 	s := playerSession(p)
 
 	c := fetchPrivateField[session.Conn](s, "conn")
-	cn := &conn{c, p}
+	cn := &conn{c, p.H()}
 	updatePrivateField[session.Conn](s, "conn", cn)
 }

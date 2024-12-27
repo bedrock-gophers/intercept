@@ -33,7 +33,7 @@ func (c *conn) ReadPacket() (packet.Packet, error) {
 func (c *conn) WritePacket(pk packet.Packet) error {
 	ctx := event.C(c.h)
 	for _, h := range handlers {
-		h.HandleClientPacket(ctx, pk)
+		h.HandleServerPacket(ctx, pk)
 	}
 
 	if ctx.Cancelled() {

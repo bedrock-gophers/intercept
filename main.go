@@ -5,6 +5,7 @@ import (
 	"github.com/bedrock-gophers/intercept/intercept"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player/chat"
+	"github.com/df-mc/dragonfly/server/world"
 	"github.com/pelletier/go-toml"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 	"log"
@@ -16,6 +17,9 @@ type handler struct{}
 
 func (handler) HandleClientPacket(ctx *intercept.Context, pk packet.Packet) {
 	fmt.Printf("client packet: %T\n", pk)
+	ctx.Val().ExecWorld(func(tx *world.Tx, e world.Entity) {
+
+	})
 }
 func (handler) HandleServerPacket(ctx *intercept.Context, pk packet.Packet) {
 	fmt.Printf("server packet: %T\n", pk)

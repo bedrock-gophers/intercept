@@ -2,11 +2,10 @@ package intercept
 
 import (
 	"github.com/df-mc/dragonfly/server/event"
-	"github.com/df-mc/dragonfly/server/world"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
-type Context = event.Context[*world.EntityHandle]
+type Context = event.Context[*Conn]
 
 var (
 	handlers []Handler

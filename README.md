@@ -13,10 +13,14 @@ To handle incoming players using Intercept, you can utilize the following exampl
 
 ```go
     intercept.Hook(PacketHandler{})
+
+    conf.Listeners = intercept.WrapListeners(conf.Listeners)
+    srv := conf.New()
     srv.Listen()
+    intercept.Start(srv)
 
     for p := range srv.Accept() {
-        intercept.Intercept(p)
+        _ = p
     }
 
 ```
@@ -30,12 +34,12 @@ To handle Server and Client packets using Intercept, you can use the following e
 type PacketHandler struct {}
 
 // HandleClientPacket...
-func (h *PacketHandler) HandleClientPacket(ctx *event.Context[*player.Player], pk packet.Packet)) {
+func (h *PacketHandler) HandleClientPacket(ctx *event.Context[*intercept.Conn], pk packet.Packet)) {
     fmt.Printf("new packet sent by client: %#v", pk)
 }
 
 // HandleServerPacket ...
-func (h *PacketHandler) HandleServerPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
+func (h *PacketHandler) HandleServerPacket(ctx *event.Context[*intercept.Conn], pk packet.Packet) {
     fmt.Printf("new packet sent from server: %#v", pk)
 }
 ```

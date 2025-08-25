@@ -19,7 +19,7 @@ func (l *listener) Accept() (session.Conn, error) {
 }
 
 func (l *listener) Disconnect(conn session.Conn, reason string) error {
-	return l.l.Disconnect(conn, reason)
+	return l.l.Disconnect(conn.(*Conn).Conn, reason)
 }
 
 func (l *listener) Close() error {

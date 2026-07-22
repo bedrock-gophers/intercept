@@ -19,7 +19,7 @@ type handler struct{}
 func (handler) HandleClientPacket(ctx *intercept.Context, pk packet.Packet) {
 	fmt.Printf("client packet: %T\n", pk)
 	if h, ok := ctx.Val().Handle(); ok {
-		h.ExecWorld(func(tx *world.Tx, e world.Entity) {
+		h.Do(func(tx *world.Tx, e world.Entity) {
 			p := e.(*player.Player)
 			p.Messagef("Received packet: %T", pk)
 		})
